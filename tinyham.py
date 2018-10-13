@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
+import common
 import datetime
 import sys
 import csv
@@ -23,6 +24,8 @@ if len(sys.argv) > 1:
 else:
   date = datetime.datetime.today().strftime("%Y-%m-%d")
 
+print "Run for date : {0}".format(date)
+
 con = sqlite.connect(os.path.expanduser("~/.local/share/hamster-applet/hamster.db"))
 cur = con.cursor()
 
@@ -38,8 +41,8 @@ LEFT JOIN tags       ON fact_tags.tag_id = tags.id
 WHERE date(start_time)="%s";
 """ %(date))
 
-for r in cur:
-  start_time, end_time, activity, description, category, tag = r
+for entry in cur:
+  start_time, end_time, activity, description, category, tag = entry
 
   if end_time is None:
     print "There is an unfinished activity, can't timesheet that, sorry!"
@@ -55,6 +58,8 @@ for r in cur:
     activities[(activity, category)][0] += duration
   else:
     activities[(activity, category)] = [duration, tag]
+
+  common.populate_sign_in_out_set(start_time, end_time)
 
 cur.close()
 
@@ -73,8 +78,7 @@ att_def = tiny.attendance_defaults()
 
 day_total = sum([infos[0] for infos in activities.values()], datetime.timedelta())
 
-att_lines = [[0, 0, {"action": "sign_in", "employee_id": att_def["employee_id"], "name": "%s 00:00:00" %(date) }],
-             [0, 0, {"action": "sign_out", "employee_id": att_def["employee_id"], "name": "%s %s" %(date, day_total)}]]
+att_lines = common.update_attendances_lines(date, att_def["employee_id"])
 
 ts_lines = []
 
@@ -90,7 +94,7 @@ for key, infos in activities.items():
   if duration_hours == 0:
     print "Activity '%s' has zero duration. Please fix." %(activity)
     sys.exit(1)
- 
+
   # Check if project exists and is timesheetable
   match_proj = tiny.search_project(category, timesheetable_only=True)
   if len(match_proj) == 0:
