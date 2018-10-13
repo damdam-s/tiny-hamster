@@ -31,7 +31,10 @@ def export_projects(projects):
             cur.execute("""
             INSERT INTO categories(name,search_name)
             SELECT :project, :project
-            WHERE NOT EXISTS(SELECT 1 FROM categories WHERE name = :project AND search_name = :project)
+              WHERE NOT EXISTS(
+                SELECT 1 FROM categories
+                  WHERE name = :project
+                    AND search_name = :project)
             """, (project,))
         con.commit()
     except Exception as err:
@@ -53,7 +56,12 @@ def main():
     if action != "find" and action != "export":
         usage()
 
-    tiny_server = tinylib.TinyServer(tinyconf.user_name, tinyconf.user_pwd, tinyconf.tiny_db, tinyconf.rpc_url)
+    tiny_server = tinylib.TinyServer(
+        tinyconf.user_name,
+        tinyconf.user_pwd,
+        tinyconf.tiny_db,
+        tinyconf.rpc_url
+    )
     pjs = get_projects(tiny_server, pattern)
 
     if action == "find":
