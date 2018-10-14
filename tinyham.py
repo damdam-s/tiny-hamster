@@ -80,6 +80,8 @@ ts_lines = []
 
 for key, infos in activities.items():
   activity, category = key
+  if activity.startswith('#'):
+      continue
   duration, tag = infos #, tiny_activity = infos
   duration_hours = duration.seconds/3600.0
 
