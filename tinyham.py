@@ -75,9 +75,6 @@ tiny = tinylib.TinyServer(tinyconf.user_name, tinyconf.user_pwd, tinyconf.tiny_d
 ts_def = tiny.timesheet_defaults()
 att_def = tiny.attendance_defaults()
 
-
-day_total = sum([infos[0] for infos in activities.values()], datetime.timedelta())
-
 att_lines = common.update_attendances_lines(date, att_def["employee_id"])
 
 ts_lines = []
