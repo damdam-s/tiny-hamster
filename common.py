@@ -2,8 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 from datetime import timedelta, datetime
-from tinyconf import timezone_set
-
+import tinyconf as conf
 
 sign_in_set = set()
 sign_out_set = set()
@@ -16,8 +15,8 @@ def populate_sign_in_out_set(task_start_time, task_end_time):
     Record in sign_out_set all task_end_time
 
     """
-    task_start_time = task_start_time + timedelta(hours=timezone_set)
-    task_end_time = task_end_time + timedelta(hours=timezone_set)
+    task_start_time = task_start_time + timedelta(hours=conf.timezone_set)
+    task_end_time = task_end_time + timedelta(hours=conf.timezone_set)
     sign_in_set.add(task_start_time)
     sign_out_set.add(task_end_time)
 
@@ -25,17 +24,17 @@ def set_datetime_format(task_start_time, task_end_time):
     """
     Set to datetime format and reset seconds to 0
     """
-    task_start_time = datetime.datetime.strptime(
+    task_start_time = datetime.strptime(
         task_start_time, "%Y-%m-%d %H:%M:%S"
     )
-    task_end_time = datetime.datetime.strptime(
+    task_end_time = datetime.strptime(
         task_end_time, "%Y-%m-%d %H:%M:%S"
     )
 
     task_start_time = task_start_time.replace(second=0)
     task_end_time = task_end_time.replace(second=0)
 
-    return (task_start_time,task_end_time)
+    return (task_start_time, task_end_time)
 
 def _sign_in_set_out_attendances():
     """
@@ -65,8 +64,10 @@ def _append_attribut_lines(action, list_type, date, employee_id):
             }
         ])
 
-
 def update_attendances_lines(date, employee_id):
+    """
+    Return attendances lines with right format and exacte time
+    """
     _sign_in_set_out_attendances()
     _append_attribut_lines("sign_in", sign_in_set, date, employee_id)
     _append_attribut_lines("sign_out", sign_out_set, date, employee_id)
