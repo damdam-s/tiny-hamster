@@ -46,3 +46,8 @@ OpenERP.
 That's it. You can also import data into OpenERP more frequently (especially
 recommended near the end of the month to help the administrative team).
 
+Tip(s)
+----------------
+
+* If you start your activity description by `#` character
+  this line will not be pushing towards odoo 
