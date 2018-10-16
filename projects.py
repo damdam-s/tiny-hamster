@@ -6,26 +6,33 @@ try:
     from pysqlite2 import dbapi2 as sqlite
 except ImportError:
     import sqlite3 as sqlite
-import tinylib
-import tinyconf
+from . import tinylib
+from . import common
+
 
 def usage():
     print "usage: projects.py [find|export] <project pattern>"
     sys.exit(1)
 
+
 def get_projects(tiny, project_pattern):
     projects = []
-    for project in tiny.search_project(project_pattern, timesheetable_only=True):
+    for project in tiny.search_project(
+            project_pattern,
+            timesheetable_only=True):
         projects.append(project[1])
     return projects
+
 
 def find_projects(projects):
     for project in projects:
         print project
 
+
 def export_projects(projects):
     try:
-        con = sqlite.connect(os.path.expanduser("~/.local/share/hamster-applet/hamster.db"))
+        con = sqlite.connect(os.path.expanduser(
+            "~/.local/share/hamster-applet/hamster.db"))
         cur = con.cursor()
         for project in projects:
             cur.execute("""
@@ -45,6 +52,7 @@ def export_projects(projects):
     finally:
         if con:
             con.close()
+
 
 def main():
     try:
@@ -69,6 +77,7 @@ def main():
         find_projects(pjs)
     elif action == "export":
         export_projects(pjs)
+
 
 if __name__ == "__main__":
     main()
