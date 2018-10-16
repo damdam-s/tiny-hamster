@@ -48,8 +48,7 @@ for entry in cur:
     print "There is an unfinished activity, can't timesheet that, sorry!"
     sys.exit(1)
 
-  start_time = datetime.datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
-  end_time = datetime.datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
+  start_time, end_time = common.set_datetime_format(start_time, end_time)
 
   duration = end_time - start_time
 
